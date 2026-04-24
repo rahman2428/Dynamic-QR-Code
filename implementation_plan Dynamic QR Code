@@ -1,0 +1,120 @@
+# Dynamic QR Code Management System — Implementation Plan
+
+## Architecture Overview
+
+```mermaid
+graph TB
+    subgraph Frontend["Frontend (React + Vite + Tailwind CSS)"]
+        A[Auth Pages] --> B[Admin Dashboard]
+        B --> C[QR Code Manager]
+        B --> D[Analytics Dashboard]
+        B --> E[Bulk Upload]
+        B --> F[Settings]
+    end
+
+    subgraph Backend["Backend (Node.js + Express)"]
+        G[Auth API] --> H[JWT Middleware]
+        I[QR Code API] --> H
+        J[Analytics API] --> H
+        K[Redirect Engine] 
+        L[Bulk Processing]
+    end
+
+    subgraph Database["MongoDB"]
+        M[(QR Codes Collection)]
+        N[(Users Collection)]
+        O[(Analytics Collection)]
+    end
+
+    Frontend --> Backend
+    K --> M
+    I --> M
+    G --> N
+    J --> O
+```
+
+## Project Structure
+
+```
+QR code Editor/
+├── client/                    # React Frontend (Vite)
+│   ├── src/
+│   │   ├── components/        # Reusable UI components
+│   │   ├── pages/             # Page-level components
+│   │   ├── context/           # Auth & App context
+│   │   ├── hooks/             # Custom React hooks
+│   │   ├── services/          # API service layer
+│   │   ├── utils/             # Utility functions
+│   │   └── assets/            # Static assets
+│   └── index.html
+├── server/                    # Express Backend
+│   ├── config/                # DB & app config
+│   ├── controllers/           # Route controllers
+│   ├── middleware/             # Auth, rate limiting
+│   ├── models/                # Mongoose models
+│   ├── routes/                # API routes
+│   ├── services/              # Business logic
+│   └── server.js              # Entry point
+└── package.json               # Root package.json
+```
+
+## Implementation Phases
+
+### Phase 1: Backend Foundation
+- [x] Initialize Node.js project
+- [x] Set up Express server with CORS
+- [x] MongoDB connection with Mongoose
+- [x] User model + JWT authentication
+- [x] QR Code model (unique ID, destination URL, alias, expiry, status)
+- [x] Analytics model (scan tracking)
+- [x] Redirect engine (GET /:id → 301/302 redirect)
+
+### Phase 2: Core API Routes
+- [x] Auth: Register, Login, Refresh Token
+- [x] QR Codes: CRUD operations
+- [x] QR Download: Generate PNG/SVG
+- [x] Analytics: Track scans, retrieve stats
+- [x] Bulk upload: CSV processing
+- [x] Custom alias support
+
+### Phase 3: Frontend — Auth & Layout
+- [x] Vite + React + Tailwind CSS setup
+- [x] Auth pages (Login / Register)
+- [x] Dashboard layout with sidebar navigation
+- [x] Auth context + protected routes
+
+### Phase 4: Frontend — Core Features
+- [x] QR Code list view with search/filter
+- [x] Create QR Code form
+- [x] Edit destination URL inline
+- [x] Download QR Code (PNG/SVG)
+- [x] Delete/deactivate QR codes
+
+### Phase 5: Advanced Features
+- [x] Analytics dashboard with charts
+- [x] QR Code expiry management
+- [x] Bulk CSV upload UI
+- [x] Multi-destination routing rules
+- [x] Custom alias support
+
+### Phase 6: Polish
+- [x] Rate limiting & security
+- [x] Input validation
+- [x] Error handling
+- [x] Responsive design
+- [x] API documentation
+
+## Key Design Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Database | MongoDB | Flexible schema, fast reads for redirects |
+| Auth | JWT | Stateless, scalable |
+| QR Library | `qrcode` npm | Mature, supports PNG/SVG |
+| Frontend | React + Vite | Fast dev, modern tooling |
+| Styling | Tailwind CSS | User requested, rapid UI development |
+| Charts | Recharts | Lightweight, React-native |
+
+> [!IMPORTANT]
+> The redirect engine must be optimized for <200ms response time. 
+> MongoDB indexes on `shortId` and `customAlias` are critical.

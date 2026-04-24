@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
 import { Download, X, Maximize2, Copy, Check, Image, FileCode } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -69,8 +70,8 @@ export function QRCodePreviewModal({ url, title, onClose }) {
     setTimeout(() => setCopied(false), 2000);
   }, [url]);
 
-  return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 modal-overlay" onClick={onClose}>
+  return createPortal(
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 modal-overlay" onClick={onClose}>
       <div className="glass-card max-w-md w-full modal-content" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-dark-700/30">
@@ -122,7 +123,8 @@ export function QRCodePreviewModal({ url, title, onClose }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
